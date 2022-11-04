@@ -4,7 +4,7 @@ Simple input-related helpers for Unity, supports legacy Input and Rewired
 Example usage:
 
 ```C#
-  public class Player : MonoBehaviour {
+public class Player : MonoBehaviour {
 	DelayedInput inputJump;
 	DelayedInput inputInteract;
 	
@@ -35,5 +35,5 @@ Example usage:
 		if (inputInteract.CheckAny()) { return; }
 		inputJump.Check();
 	}
-  }
+}
 ```
