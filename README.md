@@ -37,3 +37,5 @@ public class Player : MonoBehaviour {
 	}
 }
 ```
+
+To enable support for Rewired, add USE_REWIRED to the project's Scripting Define Symbols (in the Player settings).
