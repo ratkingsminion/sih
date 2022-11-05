@@ -11,7 +11,7 @@ public class Player : MonoBehaviour {
 	void OnEnable() {
 		if (inputJump == null) { inputJump = DelayedInput.Create(gameObject, "jump"); }
 		if (inputInteract == null) { inputInteract = DelayedInput.Create(gameObject, "interact"); }
-		inputJump.SetInstant("player/jump", () => { GetComponent<Rigidbody>().AddForce(0f, 20f, 0f, ForceMode.Impulse));
+		inputJump.SetInstant("player/jump", () => { GetComponent<Rigidbody>().AddForce(0f, 20f, 0f, ForceMode.Impulse)); });
 	}
 	
 	void OnDisable() {
