@@ -23,7 +23,7 @@ public class Player : MonoBehaviour {
 		// interacting with the world elements
 		var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 		if (Physics.Raycast(ray, out var hit, 2f, LayerMask.GetLayer("Default", "Interactable"), QueryTriggerInteraction.Ignore)
-					&& hit.TryGetComponent(hit.collider, out Interactable interactable)
+					&& hit.collider.TryGetComponent(out Interactable interactable)
 					&& interactable.CanInteract(gameObject)) {
 			// TODO: highlight hovered interactable
 			inputInteract.SetInteractable(interactable, "player/interact_short", "player/interact_long");
