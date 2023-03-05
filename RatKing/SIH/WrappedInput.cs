@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace RatKing.SIH {
 
@@ -35,10 +36,26 @@ namespace RatKing.SIH {
 		public static bool UsingGamepad { get; private set; } = true;
 		public static bool UsingMouseAndKeyboard { get; private set; }
 		public static int CurScheme { get; private set; } = 0; // based on RewiredConsts.Category
-		//
+		
 		Vector3 lastMousePos;
 		double lastTimeSwitch;
+
+		readonly static List<(Object holder, int schemeToSet)> temporarySchemes = new();
 #endif
+
+		//
+
+		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+		static void RuntimeInitializeOnLoad() {
+#if USE_REWIRED
+			player = null;
+			UsingGamepad = true;
+			UsingMouseAndKeyboard = false;
+			CurScheme = 0;
+			temporarySchemes.Clear();
+#endif
+
+		}
 
 		//
 		
@@ -138,9 +155,31 @@ namespace RatKing.SIH {
 		}
 
 		//
+		
+		// call with RewiredConsts.Category.XYZ
+		public static void SetTemporaryScheme(int newScheme, Object holder) {
+			var alreadyIdx = temporarySchemes.FindIndex(ts => ts.holder == holder);
+			if (alreadyIdx < 0) { temporarySchemes.Add((holder, newScheme)); }
+			else { var ts = temporarySchemes[alreadyIdx]; ts.schemeToSet = newScheme; temporarySchemes[alreadyIdx] = ts; }
+			_SwitchScheme(temporarySchemes[^1].schemeToSet);
+		}
 
+		public static void ResetTemporaryScheme(Object holder) {
+			if (holder == null) { Debug.LogWarning("Misuse of ResetTemporaryScheme!"); return; }
+			var alreadyIdx = temporarySchemes.FindIndex(ts => ts.holder == holder);
+			if (alreadyIdx < 0) { return; }
+			temporarySchemes.RemoveAt(alreadyIdx);
+			if (temporarySchemes.Count > 0) { _SwitchScheme(temporarySchemes[^1].schemeToSet); }
+		}
+		
 		// call with RewiredConsts.Category.XYZ
 		public static void SwitchScheme(int newScheme) {
+			if (temporarySchemes.Count == 0) { temporarySchemes.Add((null, newScheme));}
+			else { var ts = temporarySchemes[0]; ts.schemeToSet = newScheme; temporarySchemes[0] = ts; }
+			if (temporarySchemes.Count == 1) { _SwitchScheme(newScheme); }
+		}
+
+		static void _SwitchScheme(int newScheme) {
 			if (CurScheme == newScheme) { return; }
 
 			CHANGE_SCHEME.Broadcast(newScheme);
