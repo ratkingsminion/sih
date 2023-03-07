@@ -117,6 +117,8 @@ namespace RatKing.SIH {
 #if USE_REWIRED
 		void OnDestroy() {
 			player = null;
+			CurScheme = 0;
+			temporarySchemes.Clear();
 		}
 		
 		void Update() {
